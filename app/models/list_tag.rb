@@ -25,8 +25,6 @@ class ListTag < ApplicationRecord
   private
 
   def set_tag_follow
-    Rails.logger.info '>>>>>TAG_SET:'
-    Rails.logger.info TagFollow.find_by!(tag_id: tag_id, account_id: list.account_id)
     self.tag_follow = TagFollow.find_by!(tag_id: tag_id, account_id: list.account_id)
   end
 end

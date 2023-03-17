@@ -18,6 +18,9 @@ class Api::V1::Timelines::ListController < Api::BaseController
 
   def set_list
     @list = List.where(account: current_account).find(params[:id])
+    Rails.logger.info '>>>>>LIST TAG:'
+    Rails.logger.info @list.tags.first.inspect
+    @tag = @list.tags.first
   end
 
   def set_statuses
@@ -39,6 +42,16 @@ class Api::V1::Timelines::ListController < Api::BaseController
 
   def list_feed
     ListFeed.new(@list)
+    # TagFeed.new(
+    #   @tag,
+    #   current_account,
+    #   any: params[:any],
+    #   all: params[:all],
+    #   none: params[:none],
+    #   local: truthy_param?(:local),
+    #   remote: truthy_param?(:remote),
+    #   only_media: truthy_param?(:only_media)
+    # )
   end
 
   def insert_pagination_headers
