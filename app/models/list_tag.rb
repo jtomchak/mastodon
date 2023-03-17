@@ -4,26 +4,27 @@
 #
 # Table name: list_tags
 #
-#  id         :bigint(8)        not null, primary key
-#  list_id    :bigint(8)        not null
-#  tag_id     :bigint(8)        not null
-#  follow_id  :bigint(8)        not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id             :bigint(8)        not null, primary key
+#  list_id        :bigint(8)        not null
+#  tag_id         :bigint(8)        not null
+#  follow_id      :bigint(8)        not null
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  tag_follows_id :bigint(8)
 #
 
 class ListTag < ApplicationRecord
   belongs_to :list
   belongs_to :tag
-  belongs_to :follow
+  belongs_to :tag_follows
 
-  validates :account_id, uniqueness: { scope: :list_id }
+  validates :tag_id, uniqueness: { scope: :list_id }
 
-  before_validation :set_follow
+  before_validation :set_tag_follows
 
   private
 
-  def set_follow
-    self.follow = Follow.find_by!(account_id: list.account_id, target_account_id: account.id) unless list.account_id == account.id
+  def set_tag_follows
+    self.tag_follows = TagFollow.where(tag_id: tag_id, account_id: list.account_id)
   end
 end

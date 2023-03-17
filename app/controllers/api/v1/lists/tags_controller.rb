@@ -6,6 +6,7 @@ class Api::V1::Lists::TagsController < Api::BaseController
 
   before_action :require_user!
   before_action :set_list
+  # before_action :set_or_create_tag
 
   after_action :insert_pagination_headers, only: :show
 
@@ -16,8 +17,10 @@ class Api::V1::Lists::TagsController < Api::BaseController
 
   def create
     ApplicationRecord.transaction do
-      list_accounts.each do |account|
-        @list.accounts << account
+      list_tags.each do |tag|
+        Rails.logger.info '>>>>>TAG:'
+        Rails.logger.info tag
+        @list.tags << tag
       end
     end
 
@@ -31,9 +34,36 @@ class Api::V1::Lists::TagsController < Api::BaseController
 
   private
 
+  def set_or_create_tag
+    return not_found unless Tag::HASHTAG_NAME_RE.match?(params[:id])
+
+    @tag = Tag.find_normalized(params[:id]) || Tag.new(name: Tag.normalize(params[:id]), display_name: params[:id])
+  end
+
+  # Get the list by id
   def set_list
     @list = List.where(account: current_account).find(params[:list_id])
   end
+
+  def list_tags
+    # Tag.find(tag_names)
+    Tag.find_or_create_by_names(tag_names)
+  end
+
+  # Get the body params 'tag_names' a string array of hashtags
+  def tag_names
+    Array(resource_params[:tag_names])
+  end
+
+  def resource_params
+    params.permit(tag_names: [])
+  end
+
+  ## previous
+
+  # def set_list
+  #   @list = List.where(account: current_account).find(params[:list_id])
+  # end
 
   def load_accounts
     if unlimited?
@@ -41,18 +71,6 @@ class Api::V1::Lists::TagsController < Api::BaseController
     else
       @list.accounts.without_suspended.includes(:account_stat).paginate_by_max_id(limit_param(DEFAULT_ACCOUNTS_LIMIT), params[:max_id], params[:since_id])
     end
-  end
-
-  def list_accounts
-    Account.find(account_ids)
-  end
-
-  def account_ids
-    Array(resource_params[:account_ids])
-  end
-
-  def resource_params
-    params.permit(account_ids: [])
   end
 
   def insert_pagination_headers
