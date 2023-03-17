@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_17_051525) do
+ActiveRecord::Schema.define(version: 2023_03_17_054816) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -537,11 +537,9 @@ ActiveRecord::Schema.define(version: 2023_03_17_051525) do
   create_table "list_tags", force: :cascade do |t|
     t.bigint "list_id", null: false
     t.bigint "tag_id", null: false
-    t.bigint "follow_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.bigint "tag_follows_id"
-    t.index ["follow_id"], name: "index_list_tags_on_follow_id"
+    t.bigint "tag_follow_id", null: false
     t.index ["list_id", "tag_id"], name: "index_list_tags_on_list_id_and_tag_id"
     t.index ["list_id"], name: "index_list_tags_on_list_id"
     t.index ["tag_id", "list_id"], name: "index_list_tags_on_tag_id_and_list_id", unique: true
@@ -1186,7 +1184,6 @@ ActiveRecord::Schema.define(version: 2023_03_17_051525) do
   add_foreign_key "list_accounts", "accounts", on_delete: :cascade
   add_foreign_key "list_accounts", "follows", on_delete: :cascade
   add_foreign_key "list_accounts", "lists", on_delete: :cascade
-  add_foreign_key "list_tags", "follows", on_delete: :cascade
   add_foreign_key "list_tags", "lists", on_delete: :cascade
   add_foreign_key "list_tags", "tags", on_delete: :cascade
   add_foreign_key "lists", "accounts", on_delete: :cascade
