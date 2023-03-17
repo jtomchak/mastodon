@@ -42,16 +42,16 @@ class Api::V1::Timelines::ListController < Api::BaseController
 
   def list_feed
     ListFeed.new(@list)
-    # TagFeed.new(
-    #   @tag,
-    #   current_account,
-    #   any: params[:any],
-    #   all: params[:all],
-    #   none: params[:none],
-    #   local: truthy_param?(:local),
-    #   remote: truthy_param?(:remote),
-    #   only_media: truthy_param?(:only_media)
-    # )
+    TagFeed.new(
+      @tag,
+      current_account,
+      any: params[:any],
+      all: params[:all],
+      none: params[:none],
+      local: truthy_param?(:local),
+      remote: truthy_param?(:remote),
+      only_media: truthy_param?(:only_media)
+    )
   end
 
   def insert_pagination_headers
