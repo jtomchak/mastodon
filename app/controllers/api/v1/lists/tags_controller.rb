@@ -8,7 +8,6 @@ class Api::V1::Lists::TagsController < Api::BaseController
   before_action :require_user!
   before_action :set_list
   before_action :set_results
-  before_action :load_tags
 
   def show
     render json: @results.map(&:tag), each_serializer: REST::TagSerializer, relationships: TagRelationshipsPresenter.new(@results.map(&:tag), current_user&.account_id)
